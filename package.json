@@ -1,0 +1,9 @@
+{
+  "name": "car-video-capture",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone guided car video capture web app for motor claims",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

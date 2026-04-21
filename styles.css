@@ -1,0 +1,452 @@
+:root {
+  --bg: #f6f1ea;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: #ffffff;
+  --ink: #19123a;
+  --muted: #625d79;
+  --line: rgba(25, 18, 58, 0.1);
+  --brand: #0db46a;
+  --brand-deep: #0d7d57;
+  --accent: #ff6b3d;
+  --warn: #ffb000;
+  --danger: #df3654;
+  --shadow: 0 20px 40px rgba(34, 24, 72, 0.12);
+  --radius: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Manrope", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(13, 180, 106, 0.12), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255, 107, 61, 0.14), transparent 28%),
+    linear-gradient(180deg, #fcfaf7 0%, var(--bg) 100%);
+}
+
+body {
+  padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 20px 18px 40px;
+}
+
+.topbar,
+.progress-meta,
+.toolbar,
+.control-row,
+.capture-pill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar {
+  margin-bottom: 20px;
+}
+
+.brand-lockup {
+  flex: 1;
+}
+
+.brand-lockup h1,
+.panel-card h2,
+.coachmark-card h2 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: -0.03em;
+}
+
+.brand-lockup h1 {
+  font-size: clamp(1.9rem, 4vw, 2.4rem);
+}
+
+.brand-kicker,
+.eyebrow,
+.coachmark-step,
+.meta-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--brand-deep);
+  font-weight: 700;
+}
+
+.hero-card,
+.panel-card,
+.camera-stage {
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+}
+
+.hero-card {
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.lede {
+  margin: 10px 0 22px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.progress-rail {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(25, 18, 58, 0.08);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand) 0%, #68d883 100%);
+  transition: width 0.35s ease;
+}
+
+.signal-badge,
+.capture-pill,
+.help-button,
+.icon-button,
+.status-item,
+.warning-banner,
+.metadata-card,
+.summary-grid article {
+  border: 1px solid var(--line);
+}
+
+.signal-badge,
+.capture-pill {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.74);
+  font-size: 0.85rem;
+}
+
+.page-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.panel {
+  display: none;
+  gap: 16px;
+}
+
+.panel.active {
+  display: grid;
+}
+
+.panel-card {
+  padding: 22px;
+}
+
+.panel-card.subtle {
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.checklist,
+.status-grid,
+.meta-grid,
+.summary-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.checklist article,
+.status-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.checklist span {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(13, 180, 106, 0.18), rgba(255, 107, 61, 0.1));
+  color: var(--brand-deep);
+  font-weight: 800;
+}
+
+.checklist h3,
+.metadata-card h3 {
+  margin: 0 0 6px;
+}
+
+.checklist p,
+.bullet-list,
+.warning-banner,
+.status-item span,
+.meta-grid article,
+.summary-grid article span,
+.metadata-card pre {
+  margin: 0;
+  color: var(--muted);
+}
+
+.bullet-list {
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.status-grid,
+.meta-grid,
+.summary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.status-item,
+.summary-grid article {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.status-item strong,
+.summary-grid article strong,
+.meta-grid article strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-banner {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 176, 0, 0.12);
+}
+
+.warning-banner.hidden,
+.hidden {
+  display: none;
+}
+
+.help-button,
+.icon-button,
+.primary-button,
+.secondary-button,
+.record-button {
+  border-radius: 18px;
+  min-height: 52px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+}
+
+.help-button,
+.icon-button {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+}
+
+.help-button {
+  padding: 0 18px;
+  font-weight: 700;
+}
+
+.icon-button {
+  width: 52px;
+  font-size: 1.8rem;
+}
+
+.primary-button,
+.secondary-button,
+.record-button {
+  width: 100%;
+  border: none;
+  padding: 0 18px;
+  font-weight: 800;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--brand) 0%, #51c774 100%);
+  color: white;
+}
+
+.secondary-button {
+  background: rgba(25, 18, 58, 0.06);
+  color: var(--ink);
+}
+
+.secondary-button.danger {
+  color: var(--danger);
+}
+
+.record-button {
+  background: linear-gradient(135deg, var(--accent) 0%, #ff875d 100%);
+  color: white;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.record-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.camera-stage {
+  position: relative;
+  overflow: hidden;
+  min-height: 54vh;
+  background: #0f1120;
+}
+
+#cameraPreview,
+#reviewVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #121522;
+  border-radius: 20px;
+}
+
+#reviewVideo {
+  aspect-ratio: 16 / 9;
+  margin-top: 16px;
+}
+
+.camera-overlay {
+  position: absolute;
+  inset: 0;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 10, 17, 0.42), transparent 30%, rgba(7, 10, 17, 0.6));
+}
+
+.coachmark-card {
+  max-width: min(85%, 380px);
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+}
+
+.coachmark-card p {
+  margin: 0;
+}
+
+.coachmark-card h2 {
+  margin: 4px 0 8px;
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+}
+
+.compass-strip {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.compass-strip span {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.compass-strip span.active {
+  background: linear-gradient(90deg, var(--brand), #8be7a2);
+}
+
+.capture-controls {
+  display: grid;
+  gap: 16px;
+}
+
+.toolbar.wrap {
+  flex-wrap: wrap;
+}
+
+.meta-grid article {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(25, 18, 58, 0.08);
+}
+
+.meta-grid article:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.metadata-card {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(25, 18, 58, 0.04);
+}
+
+.metadata-card pre {
+  overflow: auto;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.status-ok {
+  color: var(--brand-deep);
+}
+
+.status-warn {
+  color: #9a6a00;
+}
+
+.status-error {
+  color: var(--danger);
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 18px 14px 32px;
+  }
+
+  .topbar {
+    align-items: start;
+  }
+
+  .topbar,
+  .progress-meta,
+  .toolbar,
+  .control-row {
+    flex-wrap: wrap;
+  }
+
+  .status-grid,
+  .meta-grid,
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-stage {
+    min-height: 48vh;
+  }
+
+  .coachmark-card {
+    max-width: 100%;
+  }
+}
