@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>ACKO Motor Claims | 360° Car Video</title>
+    <title>ACKO Motor Claims | Guided Car Capture</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -15,12 +15,12 @@
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <button class="icon-button ghost" type="button" aria-label="Back">
+        <button class="icon-button" type="button" aria-label="Back">
           <span aria-hidden="true">‹</span>
         </button>
         <div class="brand-lockup">
           <span class="brand-kicker">ACKO Motor Claims</span>
-          <h1>Record a 360° Video</h1>
+          <h1>Vehicle Inspection</h1>
         </div>
         <button class="help-button" type="button">Help</button>
       </header>
@@ -28,62 +28,124 @@
       <main class="page-stack">
         <section class="hero-card">
           <div class="hero-copy">
-            <p class="eyebrow">Fast inspection journey</p>
-            <p class="lede">
-              Walk around your vehicle in landscape mode and capture every angle with live guidance.
-            </p>
+            <p class="eyebrow">Guided, one step at a time</p>
+            <p class="lede">We’ll help you locate the important numbers first, then guide a clean exterior walkaround.</p>
+          </div>
+          <div class="stepper" id="stepper">
+            <span class="step-chip active">Start</span>
+            <span class="step-chip">Ready</span>
+            <span class="step-chip">Numbers</span>
+            <span class="step-chip">Capture</span>
+            <span class="step-chip">Review</span>
           </div>
           <div class="progress-rail" aria-label="Journey progress">
-            <span class="progress-fill" id="journeyProgress" style="width: 25%"></span>
+            <span class="progress-fill" id="journeyProgress" style="width: 20%"></span>
           </div>
           <div class="progress-meta">
-            <span id="progressLabel">Step 1 of 4</span>
+            <span id="progressLabel">Step 1 of 5</span>
             <span id="signalBadge" class="signal-badge">Ready</span>
           </div>
         </section>
 
         <section class="panel active" data-panel="intro">
-          <div class="panel-card">
-            <h2>How it works</h2>
-            <div class="checklist">
+          <div class="panel-card hero-panel">
+            <h2>What happens in this inspection</h2>
+            <div class="glance-grid">
               <article>
-                <span>1</span>
-                <div>
-                  <h3>Keep your car parked in open light</h3>
-                  <p>Make sure the full vehicle is visible and move slowly for a clean exterior scan.</p>
-                </div>
+                <strong>1</strong>
+                <p>Get your vehicle and phone ready.</p>
               </article>
               <article>
-                <span>2</span>
-                <div>
-                  <h3>Use the rear camera in landscape</h3>
-                  <p>We will nudge you if the phone rotates or if camera or audio access is interrupted.</p>
-                </div>
+                <strong>2</strong>
+                <p>Locate the engine and chassis number areas before recording.</p>
               </article>
               <article>
-                <span>3</span>
-                <div>
-                  <h3>Follow the live coachmarks</h3>
-                  <p>Timed prompts guide you around the car and tell you when a full walkaround is done.</p>
-                </div>
+                <strong>3</strong>
+                <p>Record a guided 360° video with gentle prompts.</p>
               </article>
             </div>
           </div>
-          <div class="panel-card subtle">
-            <h2>Things to know before recording</h2>
-            <ul class="bullet-list">
-              <li>Minimum recommended capture time is <strong>90 seconds</strong>.</li>
-              <li>Microphone audio stays on so voice notes and ambient context are retained.</li>
-              <li>Location, timestamp, device information, and session signals are collected for claim integrity.</li>
-              <li>Torch is available only on supported devices and browsers.</li>
-            </ul>
+          <div class="toolbar">
+            <button class="primary-button" type="button" data-next="prep">Continue</button>
           </div>
-          <button class="primary-button" type="button" data-next="permissions">Continue</button>
+        </section>
+
+        <section class="panel" data-panel="prep">
+          <div class="panel-card">
+            <h2>Before you begin</h2>
+            <p class="support-copy">Please confirm each point before we unlock the inspection.</p>
+            <div class="ack-list" id="prepChecklist">
+              <button class="ack-item" type="button" data-ack="space">
+                <span>Car is parked in an open, well-lit area</span>
+                <strong>Confirm</strong>
+              </button>
+              <button class="ack-item" type="button" data-ack="landscape">
+                <span>I’m ready to hold my phone in landscape</span>
+                <strong>Confirm</strong>
+              </button>
+              <button class="ack-item" type="button" data-ack="documents">
+                <span>I can access the engine and chassis number area</span>
+                <strong>Confirm</strong>
+              </button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="secondary-button" type="button" data-back="intro">Back</button>
+            <button class="primary-button" type="button" id="prepContinue" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="numbers">
+          <div class="panel-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Step before video</p>
+                <h2>Locate engine and chassis number</h2>
+              </div>
+              <span class="signal-badge muted">Soft guide</span>
+            </div>
+            <div class="locator-grid">
+              <article class="locator-card">
+                <h3>Engine number</h3>
+                <p>Usually stamped on the engine block inside the bonnet. Use the torch if the bay is dim.</p>
+                <ul class="bullet-list compact">
+                  <li>Open the bonnet safely.</li>
+                  <li>Look near the engine block or on a fixed metal surface.</li>
+                  <li>Clean dust gently if the stamping is hard to read.</li>
+                </ul>
+                <button class="ack-item subtle" type="button" data-locator="engine">
+                  <span>I found the engine number area</span>
+                  <strong>Mark done</strong>
+                </button>
+              </article>
+              <article class="locator-card">
+                <h3>Chassis number</h3>
+                <p>Often visible near the windshield base, the driver-side door pillar, or on a label in the engine bay.</p>
+                <ul class="bullet-list compact">
+                  <li>Check the lower windshield corner first.</li>
+                  <li>Then check the driver-side door jamb or B-pillar.</li>
+                  <li>If needed, look for a VIN/chassis label under the bonnet.</li>
+                </ul>
+                <button class="ack-item subtle" type="button" data-locator="chassis">
+                  <span>I found the chassis number area</span>
+                  <strong>Mark done</strong>
+                </button>
+              </article>
+            </div>
+            <div class="tip-card">
+              <strong>Need a quick rule of thumb?</strong>
+              <p>Find the number locations now so you don’t pause midway through the walkaround.</p>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="secondary-button" type="button" data-back="prep">Back</button>
+            <button class="primary-button" type="button" id="numbersContinue" disabled>Continue to camera</button>
+          </div>
         </section>
 
         <section class="panel" data-panel="permissions">
           <div class="panel-card">
-            <h2>Before we start</h2>
+            <h2>Camera check</h2>
             <div class="status-grid">
               <article class="status-item" id="cameraStatus">
                 <strong>Camera</strong>
@@ -103,10 +165,11 @@
               </article>
             </div>
             <div class="warning-banner" id="warningBanner">
-              Permissions will be requested when you start the camera.
+              We’ll request access when you start the camera.
             </div>
           </div>
           <div class="toolbar">
+            <button class="secondary-button" type="button" data-back="numbers">Back</button>
             <button class="secondary-button" type="button" id="probeButton">Check device</button>
             <button class="primary-button" type="button" id="startCameraButton">Start camera</button>
           </div>
@@ -116,75 +179,58 @@
           <div class="camera-stage">
             <video id="cameraPreview" playsinline muted autoplay></video>
             <div class="camera-overlay">
-              <div class="coachmark-card">
-                <p class="coachmark-step">Live coachmark</p>
-                <h2 id="coachmarkTitle">Frame the front of the car</h2>
-                <p id="coachmarkBody">Start at the front bumper, keep the car centered, and begin moving clockwise.</p>
+              <div class="coachbar">
+                <div class="coach-copy">
+                  <p id="coachmarkMeta">Checkpoint 1 of 8</p>
+                  <h2 id="coachmarkTitle">Front view</h2>
+                  <p id="coachmarkBody">Keep the full front bumper and both headlights in frame.</p>
+                </div>
+                <button class="ghost-pill" type="button" id="ackStageButton">Seen</button>
               </div>
-              <div class="capture-pill-row">
-                <span class="capture-pill" id="timerPill">00:00</span>
-                <span class="capture-pill" id="torchPill">Torch off</span>
-                <span class="capture-pill" id="riskPill">Session clean</span>
+
+              <div class="camera-chrome">
+                <div class="path-dots" id="compassStrip"></div>
+                <div class="quality-bar">
+                  <span class="capture-pill" id="timerPill">00:00</span>
+                  <span class="capture-pill subtle" id="qualityPill">Hold steady</span>
+                </div>
               </div>
-              <div class="compass-strip" id="compassStrip"></div>
+
+              <div class="toast hidden" id="ackToast">Checkpoint marked</div>
             </div>
           </div>
-          <div class="panel-card capture-controls">
+
+          <div class="capture-card">
+            <div class="capture-summary">
+              <div>
+                <span class="meta-label">Goal</span>
+                <strong>2 minute guided walkaround</strong>
+              </div>
+              <div>
+                <span class="meta-label">Finish</span>
+                <strong id="finishHint">We’ll nudge you when the full loop looks complete</strong>
+              </div>
+            </div>
             <div class="control-row">
-              <button class="secondary-button" type="button" id="torchButton">Toggle flash</button>
+              <button class="secondary-button" type="button" id="torchButton">Torch</button>
               <button class="record-button" type="button" id="recordButton">Start recording</button>
               <button class="secondary-button" type="button" id="stopButton" disabled>Stop</button>
             </div>
-            <div class="meta-grid">
-              <article>
-                <span class="meta-label">Recommended loop</span>
-                <strong>90s full walkaround</strong>
-              </article>
-              <article>
-                <span class="meta-label">Current prompt</span>
-                <strong id="coachmarkIndex">1 / 8 checkpoints</strong>
-              </article>
-              <article>
-                <span class="meta-label">Orientation</span>
-                <strong id="orientationText">Checking</strong>
-              </article>
-              <article>
-                <span class="meta-label">Geo status</span>
-                <strong id="geoText">Pending</strong>
-              </article>
-            </div>
             <div class="warning-banner hidden" id="softNudge">
-              You have completed the recommended 360° loop. Continue a little longer or stop when you are satisfied.
+              Nice coverage so far. Complete a final steady pass, then stop when you’re satisfied.
             </div>
           </div>
         </section>
 
         <section class="panel" data-panel="review">
           <div class="panel-card">
-            <h2>Review your capture</h2>
+            <h2>Review video</h2>
             <video id="reviewVideo" controls playsinline></video>
-            <div class="summary-grid">
-              <article>
-                <span>Duration</span>
-                <strong id="summaryDuration">0s</strong>
-              </article>
-              <article>
-                <span>Recorded at</span>
-                <strong id="summaryTimestamp">-</strong>
-              </article>
-              <article>
-                <span>Location</span>
-                <strong id="summaryLocation">-</strong>
-              </article>
-              <article>
-                <span>Device</span>
-                <strong id="summaryDevice">-</strong>
-              </article>
+            <div class="review-strip">
+              <span class="capture-pill" id="summaryDuration">0m</span>
+              <span class="capture-pill subtle" id="summaryStatus">Ready to submit</span>
             </div>
-            <div class="metadata-card">
-              <h3>Claim integrity signals</h3>
-              <pre id="metadataDump"></pre>
-            </div>
+            <p class="support-copy">Preview the walkaround. You can retake if any side of the vehicle feels incomplete.</p>
           </div>
           <div class="toolbar wrap">
             <button class="secondary-button danger" type="button" id="deleteButton">Delete</button>
@@ -192,8 +238,8 @@
             <button class="primary-button" type="button" id="submitButton">Submit mocked upload</button>
           </div>
           <div class="panel-card subtle hidden" id="submitResult">
-            <h3>Submission complete</h3>
-            <p>The video and metadata were packaged and sent to a mocked claims endpoint successfully.</p>
+            <h3>Sent for claim review</h3>
+            <p>Your walkthrough and the required capture signals have been attached to this mocked claim.</p>
           </div>
         </section>
       </main>
