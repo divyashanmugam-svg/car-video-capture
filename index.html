@@ -35,6 +35,7 @@
             <span class="step-chip active">Start</span>
             <span class="step-chip">Ready</span>
             <span class="step-chip">Numbers</span>
+            <span class="step-chip">Camera</span>
             <span class="step-chip">Capture</span>
             <span class="step-chip">Review</span>
           </div>
@@ -63,6 +64,25 @@
                 <strong>3</strong>
                 <p>Record a guided 360° video with gentle prompts.</p>
               </article>
+            </div>
+            <div class="video-card">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Watch before you begin</p>
+                  <h3>Quick explainer</h3>
+                </div>
+                <span class="signal-badge muted">2 min guide</span>
+              </div>
+              <div class="video-frame">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/Q8zVp9869Eo?rel=0&modestbranding=1"
+                  title="Vehicle inspection explainer"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen
+                ></iframe>
+              </div>
             </div>
           </div>
           <div class="toolbar">
@@ -181,7 +201,7 @@
             <div class="camera-overlay">
               <div class="coachbar">
                 <div class="coach-copy">
-                  <p id="coachmarkMeta">Checkpoint 1 of 8</p>
+                  <p id="coachmarkMeta">Front view</p>
                   <h2 id="coachmarkTitle">Front view</h2>
                   <p id="coachmarkBody">Keep the full front bumper and both headlights in frame.</p>
                 </div>
@@ -189,10 +209,16 @@
               </div>
 
               <div class="camera-chrome">
-                <div class="path-dots" id="compassStrip"></div>
+                <div class="coverage-radar" id="coverageRadar" aria-label="Coverage around the car">
+                  <div class="radar-wheel" id="radarWheel"></div>
+                  <div class="car-silhouette" aria-hidden="true">
+                    <span class="car-roof"></span>
+                    <span class="car-cabin"></span>
+                  </div>
+                </div>
                 <div class="quality-bar">
                   <span class="capture-pill" id="timerPill">00:00</span>
-                  <span class="capture-pill subtle" id="qualityPill">Hold steady</span>
+                  <span class="capture-pill subtle" id="qualityPill">Start at the front</span>
                 </div>
               </div>
 
@@ -207,8 +233,8 @@
                 <strong>2 minute guided walkaround</strong>
               </div>
               <div>
-                <span class="meta-label">Finish</span>
-                <strong id="finishHint">We’ll nudge you when the full loop looks complete</strong>
+                <span class="meta-label">Next move</span>
+                <strong id="finishHint">Move clockwise around the car after each clear angle</strong>
               </div>
             </div>
             <div class="control-row">

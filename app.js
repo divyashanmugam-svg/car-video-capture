@@ -1,17 +1,71 @@
 const MIN_DURATION_SECONDS = 120;
-const STAGE_DURATION_SECONDS = 15;
-const GUIDED_STAGES = [
-  { title: "Front view", body: "Keep the full front bumper and both headlights in frame." },
-  { title: "Front-left corner", body: "Angle slightly and show the bonnet, wheel, and left fender together." },
-  { title: "Left side", body: "Walk slowly so the full left profile stays visible." },
-  { title: "Rear-left corner", body: "Pause briefly to show the tail lamp and rear quarter clearly." },
-  { title: "Rear view", body: "Center the number plate and rear bumper for a steady beat." },
-  { title: "Rear-right corner", body: "Turn slowly and keep the right rear quarter fully visible." },
-  { title: "Right side", body: "Capture the complete right profile before closing the loop." },
-  { title: "Front-right close", body: "Finish with a final steady pass across the grille and front-right corner." }
-];
-
 const STEP_ORDER = ["intro", "prep", "numbers", "permissions", "capture", "review"];
+const GUIDED_STAGES = [
+  {
+    key: "front",
+    label: "Front view",
+    title: "Start at the front",
+    body: "Hold the full front bumper, grille, and both headlights in frame.",
+    nextMove: "Now move clockwise toward the front-left corner.",
+    cueAfter: 8
+  },
+  {
+    key: "frontLeft",
+    label: "Front-left corner",
+    title: "Front-left corner",
+    body: "Show the bonnet edge, left headlight, fender, and wheel together.",
+    nextMove: "Continue along the left side in one slow sweep.",
+    cueAfter: 12
+  },
+  {
+    key: "left",
+    label: "Left side",
+    title: "Track the left profile",
+    body: "Keep both left doors, mirror, and wheel line visible while walking slowly.",
+    nextMove: "Arc to the rear-left corner and pause there briefly.",
+    cueAfter: 15
+  },
+  {
+    key: "rearLeft",
+    label: "Rear-left corner",
+    title: "Rear-left corner",
+    body: "Catch the tail lamp, rear quarter panel, and bumper together.",
+    nextMove: "Center the full rear next.",
+    cueAfter: 12
+  },
+  {
+    key: "rear",
+    label: "Rear view",
+    title: "Center the rear",
+    body: "Pause for a clean rear view with the number plate and both tail lamps visible.",
+    nextMove: "Continue clockwise to the rear-right corner.",
+    cueAfter: 10
+  },
+  {
+    key: "rearRight",
+    label: "Rear-right corner",
+    title: "Rear-right corner",
+    body: "Keep the tail lamp, bumper edge, and right rear quarter in view.",
+    nextMove: "Move down the right side in one steady pass.",
+    cueAfter: 12
+  },
+  {
+    key: "right",
+    label: "Right side",
+    title: "Track the right profile",
+    body: "Show the full right side with doors, mirror, and wheel line visible.",
+    nextMove: "Close the loop at the front-right corner.",
+    cueAfter: 15
+  },
+  {
+    key: "frontRight",
+    label: "Front-right corner",
+    title: "Close the loop",
+    body: "Finish with the front-right corner and one final pass across the grille.",
+    nextMove: "If all eight slices are green, stop whenever you’re satisfied.",
+    cueAfter: 12
+  }
+];
 
 const state = {
   panel: "intro",
@@ -34,8 +88,10 @@ const state = {
   torchOn: false,
   geo: null,
   metadata: null,
-  softNudgeShown: false,
   motionLevel: "steady",
+  stageStartTime: null,
+  currentStageIndex: 0,
+  softNudgeShown: false,
   acknowledgedStages: new Set(),
   integrity: {
     visibilityChanges: 0,
@@ -61,12 +117,13 @@ const coachmarkTitle = $("#coachmarkTitle");
 const coachmarkBody = $("#coachmarkBody");
 const timerPill = $("#timerPill");
 const qualityPill = $("#qualityPill");
-const softNudge = $("#softNudge");
 const finishHint = $("#finishHint");
+const softNudge = $("#softNudge");
 const summaryDuration = $("#summaryDuration");
 const summaryStatus = $("#summaryStatus");
 const submitResult = $("#submitResult");
 const ackToast = $("#ackToast");
+const radarWheel = $("#radarWheel");
 
 function setPanel(panelName) {
   state.panel = panelName;
@@ -100,10 +157,8 @@ function formatMinutes(seconds) {
 }
 
 function updateContinueButtons() {
-  const prepReady = Object.values(state.prep).every(Boolean);
-  const numbersReady = Object.values(state.locator).every(Boolean);
-  $("#prepContinue").disabled = !prepReady;
-  $("#numbersContinue").disabled = !numbersReady;
+  $("#prepContinue").disabled = !Object.values(state.prep).every(Boolean);
+  $("#numbersContinue").disabled = !Object.values(state.locator).every(Boolean);
 }
 
 function markButtonDone(button) {
@@ -119,36 +174,40 @@ function showToast(message) {
   showToast.timeoutId = window.setTimeout(() => ackToast.classList.add("hidden"), 1200);
 }
 
-function buildProgressDots(activeIndex = 0) {
-  const strip = $("#compassStrip");
-  strip.innerHTML = "";
-
+function buildRadar(activeIndex = 0) {
+  radarWheel.innerHTML = "";
   GUIDED_STAGES.forEach((stage, index) => {
-    const dot = document.createElement("span");
-    if (state.acknowledgedStages.has(index)) dot.classList.add("done");
-    if (!state.acknowledgedStages.has(index) && index === activeIndex) dot.classList.add("active");
-    dot.setAttribute("aria-label", stage.title);
-    strip.appendChild(dot);
+    const segment = document.createElement("span");
+    segment.className = "radar-segment";
+    segment.style.transform = `rotate(${index * 45}deg)`;
+    segment.setAttribute("aria-label", stage.label);
+
+    if (state.acknowledgedStages.has(index)) {
+      segment.classList.add("done");
+    } else if (index === activeIndex) {
+      segment.classList.add("active");
+    }
+
+    radarWheel.appendChild(segment);
   });
 }
 
-function getActiveStageIndex(elapsedSeconds) {
-  return Math.min(GUIDED_STAGES.length - 1, Math.floor(elapsedSeconds / STAGE_DURATION_SECONDS));
+function getActiveStage() {
+  return GUIDED_STAGES[state.currentStageIndex];
 }
 
-function refreshCoachmark(elapsedSeconds = 0) {
-  const activeIndex = getActiveStageIndex(elapsedSeconds);
-  const stage = GUIDED_STAGES[activeIndex];
-  coachmarkMeta.textContent = `Checkpoint ${activeIndex + 1} of ${GUIDED_STAGES.length}`;
-  coachmarkTitle.textContent = stage.title;
-  coachmarkBody.textContent = stage.body;
-  buildProgressDots(activeIndex);
+function refreshCoachmark() {
+  const active = getActiveStage();
+  coachmarkMeta.textContent = active.label;
+  coachmarkTitle.textContent = active.title;
+  coachmarkBody.textContent = active.body;
+  finishHint.textContent = active.nextMove;
+  buildRadar(state.currentStageIndex);
 }
 
 function updateOrientationState() {
   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
   setStatus("orientationStatus", isLandscape ? "Ready" : "Rotate to landscape", isLandscape ? "status-ok" : "status-warn");
-
   if (!isLandscape && state.recorder?.state === "recording") {
     state.integrity.orientationWarnings += 1;
   }
@@ -156,8 +215,8 @@ function updateOrientationState() {
 
 function updateQualityPill(elapsedSeconds = 0) {
   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-  const activeIndex = getActiveStageIndex(elapsedSeconds);
-  const stageAcknowledged = state.acknowledgedStages.has(activeIndex);
+  const stage = getActiveStage();
+  const timeInStage = state.stageStartTime ? elapsedSeconds - state.stageStartTime : 0;
 
   if (!isLandscape) {
     qualityPill.textContent = "Rotate to landscape";
@@ -166,19 +225,25 @@ function updateQualityPill(elapsedSeconds = 0) {
   }
 
   if (state.motionLevel === "fast") {
-    qualityPill.textContent = "Move a little slower";
-    signalBadge.textContent = "Slow and steady";
+    qualityPill.textContent = "Slow down a little";
+    signalBadge.textContent = "Steady sweep";
     return;
   }
 
-  if (!stageAcknowledged && elapsedSeconds > activeIndex * STAGE_DURATION_SECONDS + 7) {
-    qualityPill.textContent = "Mark this angle once clear";
-    signalBadge.textContent = "Confirm current angle";
+  if (timeInStage > stage.cueAfter && !state.acknowledgedStages.has(state.currentStageIndex)) {
+    qualityPill.textContent = "Tap Seen when this angle is clear";
+    signalBadge.textContent = "Confirm angle";
     return;
   }
 
-  qualityPill.textContent = "Hold steady";
-  signalBadge.textContent = "Guided capture";
+  if (state.acknowledgedStages.has(state.currentStageIndex)) {
+    qualityPill.textContent = "Move clockwise";
+    signalBadge.textContent = "Next angle";
+    return;
+  }
+
+  qualityPill.textContent = "Keep the whole side visible";
+  signalBadge.textContent = "Coverage tracking";
 }
 
 function handleMotion(event) {
@@ -241,10 +306,10 @@ async function startCamera() {
     await getLocation();
     setStatus("cameraStatus", "Active", "status-ok");
     setStatus("audioStatus", "Active", "status-ok");
-    warningBanner.textContent = "Camera is live. Start when you’re ready.";
+    warningBanner.textContent = "Camera is live. Start at the front of the car.";
     signalBadge.textContent = "Camera live";
     setPanel("capture");
-    refreshCoachmark(0);
+    resetGuidance();
   } catch (error) {
     warningBanner.textContent = "Camera or microphone access is blocked. Please allow permissions and try again.";
     setStatus("cameraStatus", "Blocked", "status-error");
@@ -252,6 +317,14 @@ async function startCamera() {
     signalBadge.textContent = "Permissions blocked";
     console.error(error);
   }
+}
+
+function resetGuidance() {
+  state.currentStageIndex = 0;
+  state.stageStartTime = 0;
+  state.acknowledgedStages = new Set();
+  refreshCoachmark();
+  qualityPill.textContent = "Start at the front";
 }
 
 async function toggleTorch() {
@@ -297,12 +370,11 @@ function startRecording() {
   if (!state.stream) return;
 
   state.chunks = [];
-  state.acknowledgedStages = new Set();
   state.recordingStart = Date.now();
   state.softNudgeShown = false;
   submitResult.classList.add("hidden");
   softNudge.classList.add("hidden");
-  finishHint.textContent = "We’ll nudge you when the full loop looks complete";
+  resetGuidance();
 
   const mimeType = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"].find((value) =>
     MediaRecorder.isTypeSupported(value)
@@ -322,13 +394,14 @@ function startRecording() {
   state.timerId = window.setInterval(() => {
     const elapsedSeconds = (Date.now() - state.recordingStart) / 1000;
     timerPill.textContent = formatDuration(elapsedSeconds);
-    refreshCoachmark(elapsedSeconds);
     updateQualityPill(elapsedSeconds);
 
-    const allSeen = state.acknowledgedStages.size >= GUIDED_STAGES.length;
     if (elapsedSeconds >= MIN_DURATION_SECONDS && !state.softNudgeShown) {
       softNudge.classList.remove("hidden");
-      finishHint.textContent = allSeen ? "Full loop acknowledged" : "Take a final pass across any side you haven’t marked";
+      finishHint.textContent =
+        state.acknowledgedStages.size >= GUIDED_STAGES.length
+          ? "All slices look covered. Stop whenever you’re satisfied."
+          : "Take a final pass across any slice that is not green yet.";
       state.softNudgeShown = true;
       emitHaptic([20, 30, 20]);
     }
@@ -355,7 +428,7 @@ function finalizeRecording() {
   summaryStatus.textContent =
     durationSeconds >= MIN_DURATION_SECONDS && state.acknowledgedStages.size >= GUIDED_STAGES.length
       ? "Coverage looks complete"
-      : "Consider a retake if any side is missing";
+      : "Retake if any side or corner feels incomplete";
   signalBadge.textContent = "Review ready";
   setPanel("review");
 }
@@ -396,7 +469,7 @@ async function submitMockedUpload() {
 
 function resetToCapture() {
   cleanupRecording();
-  refreshCoachmark(0);
+  resetGuidance();
   setPanel("capture");
 }
 
@@ -407,13 +480,24 @@ function deleteCapture() {
 
 function markCurrentStage() {
   if (!state.recordingStart) return;
-  const elapsedSeconds = (Date.now() - state.recordingStart) / 1000;
-  const activeIndex = getActiveStageIndex(elapsedSeconds);
-  state.acknowledgedStages.add(activeIndex);
-  buildProgressDots(activeIndex);
-  updateQualityPill(elapsedSeconds);
-  showToast(`${GUIDED_STAGES[activeIndex].title} marked`);
+
+  state.acknowledgedStages.add(state.currentStageIndex);
+  const label = GUIDED_STAGES[state.currentStageIndex].label;
+  showToast(`${label} marked`);
   emitHaptic(12);
+
+  if (state.currentStageIndex < GUIDED_STAGES.length - 1) {
+    state.currentStageIndex += 1;
+    const elapsedSeconds = (Date.now() - state.recordingStart) / 1000;
+    state.stageStartTime = elapsedSeconds;
+    refreshCoachmark();
+    updateQualityPill(elapsedSeconds);
+  } else {
+    refreshCoachmark();
+    qualityPill.textContent = "Full loop covered";
+    finishHint.textContent = "All slices are green. Take a brief final sweep and stop.";
+    buildRadar(state.currentStageIndex);
+  }
 }
 
 $$("[data-next]").forEach((button) => {
@@ -426,8 +510,7 @@ $$("[data-back]").forEach((button) => {
 
 $$("[data-ack]").forEach((button) => {
   button.addEventListener("click", () => {
-    const key = button.dataset.ack;
-    state.prep[key] = true;
+    state.prep[button.dataset.ack] = true;
     markButtonDone(button);
     updateContinueButtons();
     showToast("Acknowledged");
@@ -436,8 +519,7 @@ $$("[data-ack]").forEach((button) => {
 
 $$("[data-locator]").forEach((button) => {
   button.addEventListener("click", () => {
-    const key = button.dataset.locator;
-    state.locator[key] = true;
+    state.locator[button.dataset.locator] = true;
     markButtonDone(button);
     updateContinueButtons();
     showToast("Marked done");
@@ -470,7 +552,6 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) state.integrity.visibilityChanges += 1;
 });
 
-refreshCoachmark(0);
-buildProgressDots(0);
+resetGuidance();
 updateContinueButtons();
 probeDevice();

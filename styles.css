@@ -151,7 +151,7 @@ button {
 }
 
 .stepper {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   margin: 18px 0 16px;
 }
 
@@ -224,6 +224,39 @@ button {
 
 .glance-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.video-card {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(87, 95, 105, 0.05);
+}
+
+.section-heading.compact {
+  margin-bottom: 12px;
+}
+
+.section-heading.compact h3 {
+  margin: 4px 0 0;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.video-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #11161c;
+  aspect-ratio: 16 / 9;
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .glance-grid article {
@@ -442,27 +475,100 @@ button {
 .camera-chrome {
   display: grid;
   gap: 10px;
+  justify-items: center;
 }
 
-.path-dots {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 6px;
+.coverage-radar {
+  position: relative;
+  width: clamp(132px, 30vw, 164px);
+  aspect-ratio: 1;
 }
 
-.path-dots span {
+.radar-wheel {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      from -90deg,
+      rgba(236, 240, 243, 0.3) 0deg 40deg,
+      transparent 40deg 45deg,
+      rgba(236, 240, 243, 0.3) 45deg 85deg,
+      transparent 85deg 90deg,
+      rgba(236, 240, 243, 0.3) 90deg 130deg,
+      transparent 130deg 135deg,
+      rgba(236, 240, 243, 0.3) 135deg 175deg,
+      transparent 175deg 180deg,
+      rgba(236, 240, 243, 0.3) 180deg 220deg,
+      transparent 220deg 225deg,
+      rgba(236, 240, 243, 0.3) 225deg 265deg,
+      transparent 265deg 270deg,
+      rgba(236, 240, 243, 0.3) 270deg 310deg,
+      transparent 310deg 315deg,
+      rgba(236, 240, 243, 0.3) 315deg 355deg,
+      transparent 355deg 360deg
+    );
+  box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.72);
+}
+
+.radar-segment {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: transparent;
+  transition: transform 0.24s ease;
+}
+
+.radar-segment::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 30px;
+  height: 44px;
+  margin-left: -15px;
+  border-radius: 16px 16px 8px 8px;
+  background: rgba(241, 242, 244, 0.36);
+  transform-origin: center 72px;
+}
+
+.radar-segment.active::before {
+  background: rgba(205, 54, 52, 0.92);
+}
+
+.radar-segment.done::before {
+  background: rgba(71, 222, 47, 0.96);
+}
+
+.car-silhouette {
+  position: absolute;
+  inset: 28px;
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(208, 214, 220, 0.98));
+  box-shadow: inset 0 0 0 2px rgba(25, 32, 41, 0.12);
+}
+
+.car-roof,
+.car-cabin {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: block;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
 }
 
-.path-dots span.active {
-  background: rgba(255, 255, 255, 0.46);
+.car-roof {
+  top: 10px;
+  width: 46px;
+  height: 84px;
+  background: rgba(25, 32, 41, 0.2);
 }
 
-.path-dots span.done {
-  background: linear-gradient(90deg, rgba(16, 178, 108, 0.9), rgba(150, 220, 178, 0.92));
+.car-cabin {
+  top: 22px;
+  width: 30px;
+  height: 58px;
+  background: rgba(25, 32, 41, 0.72);
 }
 
 .capture-card {
